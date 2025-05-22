@@ -1,0 +1,8 @@
+server {
+	listen       80;
+	server_name vk.miet.ru;
+	location / {
+		proxy_pass  http://82.179.191.57:80;
+		proxy_set_header  Host        $http_host;
+        }
+}

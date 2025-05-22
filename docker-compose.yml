@@ -1,0 +1,31 @@
+version: '3'
+services:
+  php:
+    platform: linux/amd64
+    image: nexus.sipc.miet.ru/php:7.4.32-fpm
+    restart: always
+    volumes:
+      - ./vhosts/msdn.miet.ru/:/srv/vhosts/msdn.miet.ru/:ro
+    network_mode: "host"
+  nginx:
+    platform: linux/amd64
+    image: nexus.sipc.miet.ru/citl/nginx-citl:1.24
+    restart: always
+    volumes:
+      - ./nginx-root-configs/abit-htpasswd:/etc/nginx/abit-htpasswd
+      - ./nginx-root-configs/fastcgi_params:/etc/nginx/fastcgi_params
+      - ./nginx-root-configs/geo.conf:/etc/nginx/geo.conf
+      - ./nginx-root-configs/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx-root-configs/testcookie.conf:/etc/nginx/testcookie.conf
+      - ./nginx-root-configs/brotli.conf:/etc/nginx/brotli.conf
+      - ./nginx-pagespeed-cache/:/var/ngx_pagespeed_cache/
+      - ./nginx-root-configs/pagespeed.conf:/etc/nginx/pagespeed.conf
+      - ./nginx-redirects/:/etc/nginx/redirect/
+      - ./vhosts/:/srv/vhosts/
+      - ./nginx-certs/:/etc/nginx/cert/
+      - ./nginx-logs/:/var/log/nginx/
+    extra_hosts:
+            - "php:127.0.0.1"
+    depends_on:
+      - php
+    network_mode: "host"

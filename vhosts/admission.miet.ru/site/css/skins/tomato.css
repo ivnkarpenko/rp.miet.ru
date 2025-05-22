@@ -1,0 +1,34 @@
+body {
+  color: #222;
+  letter-spacing: 1px; }
+
+.color_element {
+  color: #2280bd; }
+
+.color_bg {
+  background-color: #2280bd; }
+
+.color_border {
+  border-color: #2280bd; }
+
+.bg_light {
+  background-color: #FAFAFA; }
+
+.bg_gray {
+  background-color: #444; }
+
+.bg_dark {
+  background-color: #222; }
+
+.gallery li {
+  color: #555;
+  letter-spacing: 2px; }
+.gallery li.active {
+  color: #fff;
+  border-bottom: 1px solid #2280bd; }
+
+.gallery-item .port_item_cont a {
+  border-color: #2280bd;
+  color: #2280bd; }
+
+/*# sourceMappingURL=tomato.css.map */

@@ -1,0 +1,516 @@
+@import "bourbon/bourbon"
+
+body
+	font-family: "Raleway", sans-serif
+	font-weight: normal
+	font-size: 14px
+	min-width: 320px
+	position: relative
+	line-height: 1.42857
+	-webkit-font-smoothing: antialised
+
+body input:focus:required:invalid,
+body textarea:focus:required:invalid
+	color: red
+body input:required:valid,
+body textarea:required:valid
+	color: green
+
+.hidden
+	display: none
+
+// медленное проявление страницы и preloader
+.loader
+	background: none repeat scroll 0 0 #ffffff
+	bottom: 0
+	height: 100%
+	left: 0
+	position: fixed
+	right: 0
+	top: 0
+	width: 100%
+	z-index: 9999
+	.loader_inner
+		background-image: url("../img/preloader.gif")
+		background-size: cover
+		background-repeat: no-repeat
+		background-posirion: center center
+		background-color: #fff
+		height: 60px
+		width: 60px
+		margin-top: -30px
+		margin-left: -30px
+		left: 50%
+		top: 50%
+		position: absolute
+
+section,
+.main-head
+	position: relative
+
+.main-head
+	min-height: 620px
+
+.topbar
+	z-index: 100
+	float: top
+	width: 100%
+	position: fixed
+	background-color: #2280bd
+
+
+.logo_container
+	width: 100%
+	float: left
+
+.nav_logo
+	float: left
+	display: block
+	padding-top: 7px
+	padding-bottom: 7px
+	img
+		height: 40px
+
+
+.nav_name
+	float: left
+	display: block
+	padding-top: 10px
+	padding-bottom: 10px
+	margin-left: 10px
+	color: #fff
+
+.sections_portal_wrap
+	height: 58px
+	float: right
+	display: block
+	padding-top: 20px
+	ul
+		li
+			display: inline-block
+			margin-left: 10px
+
+.top-wrapper
+	margin-top: 85px
+	display: table
+	width: 100%
+	height: 100%
+	position: absolute
+	top: 0
+	left: 0
+	z-index: 10
+	text-align: center
+	.top-left-text
+		display: inline-block
+		h1
+			padding-right: 30px
+			border-right: 1px solid #555
+			font-weight: 100
+			color: #555
+			font-size: 7.5em
+		
+	.top-right-text
+		display: inline-block
+		p
+			margin-left: 30px
+			color: #555
+			font-size: 2.3em
+
+.s-header
+	h2
+		text-align: center
+		font-size: 3.8em
+		font-weight: 100
+		letter-spacing: 2px
+		margin-top: 60px
+		margin-bottom: 100px
+		color: #555
+
+.about-lines
+	display: block
+	padding-bottom: 60px
+	.my
+		display: inline-block
+		color: #2280bd
+	.line-text-wrap
+		display: inline-block
+		font-size: 1.5em
+	
+
+.line-1
+	text-align: center
+	color: #555
+	font-size: 1.5em
+	padding-bottom: 85px
+.line-2
+	text-align: left
+	color: #555
+	margin-top: 15px
+.line-3
+	text-align: center
+	color: #555
+	font-size: 1.5em
+	padding-top: 35px
+
+
+.info-box-wrap
+	margin-top: 85px
+	margin-bottom: 70px
+.info-box
+	img
+		width: 100%
+		margin-bottom: 30px
+
+.spoiler-button
+	display: block
+	height: 80px
+	widows: 100%
+	margin-bottom: 60px
+	.button-text
+		float: left
+		margin-left: 30px
+		margin-top: 10px
+		margin-bottom: 10px
+		font-size: 3em
+		color: #fff
+		text-transform: uppercase
+	.toggle_mnu
+		width: 100%
+		height: 100%
+		background-color:  #2280bd
+	
+
+		span
+			display: block
+
+$w: 52px
+$h: 6px
+
+.sandwich 
+	width: $w
+	height: $w
+	float: right
+	margin-top: 14px
+	margin-bottom: 14px
+	margin-right: 18px
+
+.sw-topper
+	position: relative
+	top: 0
+	width: $w 
+	height: $h
+	background: rgb(255, 255, 255)
+	border: none
+	transition: transform 0.5s, top 0.2s
+	display: block
+.sw-bottom
+	position: relative
+	width: $w
+	height: $h
+	top: $h * 2.2
+	background: rgb(255, 255, 255)
+	border: none
+	transition: transform 0.5s, top 0.2s
+	transition-delay: 0.2s, 0s
+.sw-footer
+	position: relative
+	width: $w
+	height: $h
+	top: $h * 4.5
+	background: rgb(255, 255, 255)
+	border: none
+	transition: all 0.5s
+	transition-delay: 0.1s
+
+.sandwich.active
+	.sw-topper
+		top: 20px
+		transform: rotate(-45deg)
+	.sw-bottom
+		top: 14px
+		transform: rotate(45deg)
+	.sw-footer
+		opacity: 0
+		top: 0
+		transform: rotate(180deg)
+
+
+.popup-frame-1
+	position: relative
+	background: #FFF
+	padding: 20px
+	width: auto
+	max-width: 650px
+	margin: 20px auto
+
+.popup-frame-0
+	position: relative
+	background: #FFF
+	padding: 20px
+	width: auto
+	max-width: 900px
+	margin: 20px auto
+
+.programs-frame-wrap
+	margin-top: 20px
+
+.programs-text-wrap
+	margin-bottom: 25px
+	p
+		margin-bottom: 35px
+
+.table-title
+	background-color: #2280bd
+	p
+		color: #fff
+		font-size: 1em
+		font-weight: 400
+
+.red-text
+	color: #f00f00
+
+.programs
+	margin-bottom: 60px
+
+.course-wrap
+	font-size: 1.8em
+	color: #2280bd
+	padding-bottom: 20px
+
+.gallery
+	padding-top: 30px
+	padding-bottom: 30px
+
+.form
+	padding-top: 30px
+	padding-bottom: 30px
+
+.gallery-header
+	h2
+		text-align: center
+		font-size: 3.8em
+		font-weight: 100
+		letter-spacing: 2px
+		margin-top: 60px
+		margin-bottom: 30px
+		color: #fff
+
+.gallery
+	ul,
+	li
+		list-style-type: none
+		padding: 0
+		margin: 0
+		text-align: center
+	li
+		display: inline-block
+		margin: 10px 10px
+		text-transform: uppercase
+		font-size: 18px
+		cursor: pointer
+		line-height: 2
+	ul
+		margin-bottom: 50px
+
+.gallery-item
+	display: none
+	padding: 0
+	img
+		width: 100%
+	.port_item_cont
+		position: absolute
+		top: 0
+		left: 0
+		width: 100%
+		height: 100%
+		background-color: rgba(0,0,0,.8)
+		text-align: center
+		padding-top: 15%
+		opacity: 0
+		transition: all .5s
+	&:hover .port_item_cont
+		opacity: 1
+		padding-top: 25%
+	a
+		background-color: transparent
+		border: #fff 1px solid
+		padding: 8px 40px
+		display: inline-block
+		font-size: 2em
+
+.podrt_descr
+	background-color: #fff
+	max-width: 850px
+	max-height: 250px
+	margin: auto
+	p,
+	h3
+		padding: 20px
+		padding-bottom: 0
+	h3
+		margin-bottom: 0
+		text-align: center
+		text-transform: uppercase
+		font-weight: 400
+		margin-top: 20px
+		padding-top: 25px
+	p
+		margin-top: 0
+	img
+		width: 100%
+
+.modal-box-content
+	position: relative
+
+.map
+	margin-top: 30px
+	iframe
+		width: 100%
+		max-height: 450px
+
+.section_content
+	margin-bottom: 60px
+
+.contacts-header
+	h2
+		text-align: center
+		font-size: 3.8em
+		font-weight: 100
+		letter-spacing: 2px
+		margin-top: 60px
+		margin-bottom: 30px
+		color: #555
+
+
+.contact_info
+	text-align: center
+	.address
+		font-size: 1.1em
+		margin-bottom: 30px
+		i
+			font-size: 1.6em
+			color: #2280bd
+
+.site_miet
+	font-size: 1.6em
+	color: #2280bd 
+	margin-bottom: 40px
+
+.cont-people
+	display: block
+	margin-bottom: 30px
+	.cont-1-wrap
+		display: inline-block
+		margin-right: 30px
+		.cont-1
+			text-align: left
+	.cont-2-wrap
+		display: inline-block
+		.cont-2
+			text-align: left
+
+.howto-header
+	h2
+		text-align: center
+		font-size: 3.8em
+		font-weight: 100
+		letter-spacing: 2px
+		margin-top: 60px
+		margin-bottom: 70px
+		color: #555
+
+.how-to-cont-title
+	text-align: center
+	font-size: 30px
+	color: #2280bd
+	margin-bottom: 35px
+
+
+.terms
+	display: block
+	width: 100%
+	margin-bottom: 30px
+	.icon-terms
+		display: inline-block
+		i
+			font-size: 50px
+			color: #2280bd
+	.text-terms
+		display: inline-block
+		p
+			font-size: 18px
+
+.need-docs
+	margin-bottom: 25px
+	font-size: 16px
+	b
+		color: #2280bd
+		font-size: 20px
+		margin-right: 10px
+	p
+		margin-bottom: 15px
+
+.warn
+	margin-bottom: 35px
+	font-size: 16px
+	b
+		color: #2280bd
+		font-size: 20px
+		margin-right: 10px
+
+.well
+	min-height: 20px
+	padding: 19px
+	margin-bottom: 20px
+	background-color: #fff
+	border: 1px solid #2280bd
+	legend
+		display: block
+		width: 100%
+		padding: 0
+		margin-bottom: 20px
+		font-size: 28px
+		line-height: inherit
+		border: 0
+		border-bottom: 1px solid #2280bd
+		color: #2280bd
+		text-align: center
+
+.input-prepend
+	margin-bottom: 15px
+	display: block
+	.add-on
+		width: 40px
+		display: inline-block
+		color: #2280bd
+		font-size: 28px
+		margin-left: 20px
+	input
+		text-align: center
+		min-height: 30px
+		min-width: 200px
+		width: auto
+		display: inline-block
+
+.span2
+	width: 100%
+	margin-top: 20px
+	margin-bottom: 20px
+	min-height: 25px
+
+.input-lage
+	width: 100%
+	text-align: center
+	margin-bottom: 25px
+
+.btn-success
+	color: #fff
+	background-color: #2280bd
+	border-color: #2280ff
+
+.btn-success:focus
+	color: #fff
+	background-color: #2280ff
+	border-color: #2280ff
+
+

@@ -1,0 +1,50 @@
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+stages:
+  - test
+  - deploy
+
+.before_script_template:
+  before_script:
+      - 'command -v rsync >/dev/null || ( dnf install -y rsync)'
+      - eval $(ssh-agent -s)
+      - cat "$SSH_PRIVATE_KEY" | ssh-add -
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh  
+      - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+include:
+- template: Security/SAST.gitlab-ci.yml
+- template: Security/SAST-IaC.latest.gitlab-ci.yml
+- template: Jobs/Dependency-Scanning.gitlab-ci.yml
+- template: Security/Secret-Detection.gitlab-ci.yml
+
+sast:
+  stage: test
+
+deploy:
+  stage: deploy
+  extends: .before_script_template
+  image:
+    name: nexus.sipc.miet.ru/citl/rhel8
+  only:
+    - main
+  script:
+    - rsync -rz --delete --exclude="nginx-pagespeed-cache/*" --exclude="nginx-logs/*" --exclude=".*" ./ "$RP_CONNECTION_STRING":/srv/miet-rp
+    - ssh "$RP_CONNECTION_STRING" 'cd /srv/miet-rp; /srv/miet-rp/update.sh'
+
+recreate:
+  stage: deploy
+  extends: .before_script_template
+  image:
+    name: nexus.sipc.miet.ru/citl/rhel8
+  only:
+    - main
+  script:
+    - ssh "$RP_CONNECTION_STRING" 'cd /srv/miet-rp; /srv/miet-rp/recreate.sh'
+  when: manual
