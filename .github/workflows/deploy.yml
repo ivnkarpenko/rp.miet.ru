@@ -25,16 +25,14 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Install rsync
+      - name: Install rsync and sync files
         run: |
-          sudo apt-get update
-          sudo apt-get install -y rsync
+          # ставим rsync
+          sudo apt-get update && sudo apt-get install -y rsync
+          # проверяем, что rsync в PATH
+          which rsync
+          rsync --version
 
-      - name: Replace registry URLs
-        run: sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
-
-      - name: Rsync to server
-        run: |
           rsync -az --delete \
             --exclude="nginx-pagespeed-cache/*" \
             --exclude="nginx-logs/*" \
