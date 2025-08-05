@@ -27,7 +27,8 @@ jobs:
 
       - name: Install rsync locally
         run: |
-          sudo apt-get update && sudo apt-get install -y rsync
+          sudo apt-get update
+          sudo apt-get install -y rsync
 
       - name: Ensure rsync on remote server
         run: |
@@ -51,36 +52,14 @@ jobs:
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
             "command -v docker >/dev/null || (sudo apt-get update && sudo apt-get install -y docker.io docker-compose)"
 
+      - name: Deploy containers on remote
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "cd /srv/miet-rp && \
+             docker-compose pull && \
+             docker-compose up -d"
+
       - name: Reload nginx in container
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
             "cd /srv/miet-rp && docker-compose exec nginx nginx -s reload"
-
-  recreate:
-    name: Recreate Containers (manual)
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Start SSH agent and add key
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Setup known hosts
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
-      - name: Ensure Docker & Compose on remote server
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "command -v docker >/dev/null || (sudo apt-get update && sudo apt-get install -y docker.io docker-compose)"
-
-      - name: Recreate containers on server
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "cd /srv/miet-rp && docker-compose pull && docker-compose down && docker-compose up -d"
