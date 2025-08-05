@@ -36,8 +36,7 @@ jobs:
             "command -v rsync >/dev/null || (apt-get update && apt-get install -y rsync)"
 
       - name: Replace registry URLs
-        run: |
-          sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
+        run: sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
 
       - name: Rsync to server
         run: |
@@ -46,6 +45,11 @@ jobs:
             --exclude="nginx-logs/*" \
             --exclude=".*" \
             ./ "${{ secrets.RP_CONNECTION_STRING }}":/srv/miet-rp
+
+      - name: Ensure Docker & Compose on remote server
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "command -v docker >/dev/null || (apt-get update && apt-get install -y docker.io docker-compose-plugin)"
 
       - name: Reload Nginx on server
         run: |
@@ -70,6 +74,11 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
+
+      - name: Ensure Docker & Compose on remote server
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "command -v docker >/dev/null || (apt-get update && apt-get install -y docker.io docker-compose-plugin)"
 
       - name: Recreate containers on server
         run: |
