@@ -25,14 +25,21 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Install rsync and sync files
+      - name: Install rsync locally
         run: |
-          # ставим rsync
-          sudo apt-get update && sudo apt-get install -y rsync
-          # проверяем, что rsync в PATH
-          which rsync
-          rsync --version
+          sudo apt-get update
+          sudo apt-get install -y rsync
 
+      - name: Ensure rsync on remote server
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "command -v rsync >/dev/null || (apt-get update && apt-get install -y rsync)"
+
+      - name: Replace registry URLs
+        run: sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
+
+      - name: Rsync to server
+        run: |
           rsync -az --delete \
             --exclude="nginx-pagespeed-cache/*" \
             --exclude="nginx-logs/*" \
@@ -40,7 +47,9 @@ jobs:
             ./ "${{ secrets.RP_CONNECTION_STRING }}":/srv/miet-rp
 
       - name: Reload Nginx on server
-        run: ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./update.sh'
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            'cd /srv/miet-rp && ./update.sh'
 
   recreate:
     name: Recreate Containers (manual)
@@ -58,4 +67,6 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - run: ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./recreate.sh'
+      - run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            'cd /srv/miet-rp && ./recreate.sh'
