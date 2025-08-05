@@ -52,10 +52,15 @@ jobs:
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
             "command -v docker >/dev/null || (apt-get update && apt-get install -y docker.io docker-compose)"
 
+      - name: Make scripts executable on remote
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "chmod +x /srv/miet-rp/update.sh /srv/miet-rp/recreate.sh"
+
       - name: Reload Nginx on server
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "cd /srv/miet-rp && bash update.sh"
+            "cd /srv/miet-rp && ./update.sh"
 
   recreate:
     name: Recreate Containers (manual)
@@ -81,7 +86,12 @@ jobs:
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
             "command -v docker >/dev/null || (apt-get update && apt-get install -y docker.io docker-compose)"
 
+      - name: Make scripts executable on remote
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "chmod +x /srv/miet-rp/update.sh /srv/miet-rp/recreate.sh"
+
       - name: Recreate containers on server
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "cd /srv/miet-rp && bash recreate.sh"
+            "cd /srv/miet-rp && ./recreate.sh"
