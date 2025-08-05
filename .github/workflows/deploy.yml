@@ -42,8 +42,7 @@ jobs:
             ./ "${{ secrets.RP_CONNECTION_STRING }}":/srv/miet-rp
 
       - name: Reload Nginx on server
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./update.sh'
+        run: ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./update.sh'
 
   recreate:
     name: Recreate Containers (manual)
