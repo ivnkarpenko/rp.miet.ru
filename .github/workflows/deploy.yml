@@ -26,11 +26,12 @@ jobs:
           chmod 600 ~/.ssh/known_hosts
 
       - name: Install rsync
-        run: sudo apt-get update && sudo apt-get install -y rsync
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync
 
       - name: Replace registry URLs
-        run: |
-          sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
+        run: sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
 
       - name: Rsync to server
         run: |
@@ -49,20 +50,15 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Start SSH agent and add key
-        uses: webfactory/ssh-agent@v0.9.1
+      - uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Setup known hosts
-        run: |
+      - run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Recreate containers on server
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./recreate.sh'
+      - run: ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./recreate.sh'
