@@ -54,25 +54,17 @@ jobs:
 
       - name: Login to registry on remote
         run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" << 'EOF'
-            echo "${REGISTRY_PASSWORD}" | docker login repo.sipc.miet.ru \
-              --username "${REGISTRY_USERNAME}" --password-stdin
-          EOF
-        env:
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "echo '${{ secrets.REGISTRY_PASSWORD }}' | docker login repo.sipc.miet.ru --username '${{ secrets.REGISTRY_USERNAME }}' --password-stdin"
 
       - name: Deploy containers on remote
         run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" << 'EOF'
-            cd /srv/miet-rp
-            docker-compose pull
-            docker-compose up -d
-          EOF
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "cd /srv/miet-rp && \
+             docker-compose pull && \
+             docker-compose up -d"
 
       - name: Reload nginx in container
         run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" << 'EOF'
-            cd /srv/miet-rp
-            docker-compose exec nginx nginx -s reload
-          EOF
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
+            "cd /srv/miet-rp && docker-compose exec nginx nginx -s reload"
