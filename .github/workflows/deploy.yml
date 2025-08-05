@@ -1,0 +1,41 @@
+name: CI/CD Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Start SSH agent and add key
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Setup known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Replace registry URLs
+        run: |
+          sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml Dockerfile
+
+      - name: Rsync to server
+        run: |
+          rsync -az --delete \
+            --exclude="nginx-pagespeed-cache/*" \
+            --exclude="nginx-logs/*" \
+            --exclude=".*" \
+            ./ "${{ secrets.RP_CONNECTION_STRING }}":/srv/miet-rp
+
+      - name: Reload Nginx on server
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./update.sh'
