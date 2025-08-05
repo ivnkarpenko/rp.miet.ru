@@ -2,12 +2,12 @@ version: '3'
 services:
   php:
     platform: linux/amd64
-    image: nexus.sipc.miet.ru/php:7.4.32-fpm
+    image: php:7.4-fpm 
     restart: always
     volumes:
       - ./vhosts/msdn.miet.ru/:/srv/vhosts/msdn.miet.ru/:ro
     network_mode: "host"
-  nginx:
+  nginx: 
     platform: linux/amd64
     image: nexus.sipc.miet.ru/citl/nginx-citl:1.24
     restart: always
