@@ -1,43 +1,30 @@
 # .github/workflows/deploy.yml
-
 name: CI/CD Deploy
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   deploy:
-    name: Deploy to Server
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Start SSH agent and add key
+      - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Setup known hosts
+      - name: Setup known_hosts
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Install rsync locally
+      - name: Install rsync
         run: sudo apt-get update && sudo apt-get install -y rsync
-
-      - name: Ensure rsync on remote server
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "command -v rsync >/dev/null || (sudo apt-get update && sudo apt-get install -y rsync)"
-
-      - name: Replace registry URLs
-        run: |
-          sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
 
       - name: Rsync to server
         run: |
@@ -47,24 +34,16 @@ jobs:
             --exclude=".*" \
             ./ "${{ secrets.RP_CONNECTION_STRING }}":/srv/miet-rp
 
-      - name: Ensure Docker & Compose on remote server
+      - name: Ensure Docker on remote
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "command -v docker >/dev/null || (sudo apt-get update && sudo apt-get install -y docker.io docker-compose)"
+            "command -v docker >/dev/null || apt-get update && apt-get install -y docker.io docker-compose"
 
-      - name: Login to registry on remote
+      - name: Deploy containers
         run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "echo '${{ secrets.REGISTRY_PASSWORD }}' | docker login repo.sipc.miet.ru --username '${{ secrets.REGISTRY_USERNAME }}' --password-stdin"
-
-      - name: Deploy containers on remote
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "cd /srv/miet-rp && \
-             docker-compose pull && \
-             docker-compose up -d"
- 
-      - name: Reload nginx in container
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "cd /srv/miet-rp && docker-compose exec nginx nginx -s reload"
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" << 'EOF'
+            cd /srv/miet-rp
+            docker-compose pull
+            docker-compose up -d
+            docker-compose exec nginx nginx -s reload
+          EOF
