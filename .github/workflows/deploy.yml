@@ -49,7 +49,7 @@ jobs:
       - name: Ensure Docker & Compose on remote server
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "command -v docker >/dev/null || (apt-get update && apt-get install -y docker.io docker-compose-plugin)"
+            "command -v docker >/dev/null || (apt-get update && apt-get install -y docker.io docker-compose)"
 
       - name: Reload Nginx on server
         run: |
@@ -78,7 +78,7 @@ jobs:
       - name: Ensure Docker & Compose on remote server
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "command -v docker >/dev/null || (apt-get update && apt-get install -y docker.io docker-compose-plugin)"
+            "command -v docker >/dev/null || (apt-get update && apt-get install -y docker.io docker-compose)"
 
       - name: Recreate containers on server
         run: |
