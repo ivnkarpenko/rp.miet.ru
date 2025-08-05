@@ -22,7 +22,7 @@ jobs:
       - name: Setup known hosts
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
       - name: Install rsync locally
@@ -36,7 +36,8 @@ jobs:
             "command -v rsync >/dev/null || (apt-get update && apt-get install -y rsync)"
 
       - name: Replace registry URLs
-        run: sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
+        run: |
+          sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
 
       - name: Rsync to server
         run: |
@@ -54,7 +55,7 @@ jobs:
       - name: Reload Nginx on server
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            'cd /srv/miet-rp && bash update.sh'
+            "cd /srv/miet-rp && bash update.sh"
 
   recreate:
     name: Recreate Containers (manual)
@@ -72,7 +73,7 @@ jobs:
       - name: Setup known hosts
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
       - name: Ensure Docker & Compose on remote server
@@ -83,4 +84,4 @@ jobs:
       - name: Recreate containers on server
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            'cd /srv/miet-rp && bash recreate.sh'
+            "cd /srv/miet-rp && bash recreate.sh"
