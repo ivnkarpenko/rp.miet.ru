@@ -2,11 +2,12 @@ name: CI/CD Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   deploy:
+    name: Deploy to Server
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +25,9 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+      - name: Install rsync
+        run: sudo apt-get update && sudo apt-get install -y rsync
+
       - name: Replace registry URLs
         run: |
           sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
@@ -39,3 +43,26 @@ jobs:
       - name: Reload Nginx on server
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./update.sh'
+
+  recreate:
+    name: Recreate Containers (manual)
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Start SSH agent and add key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Setup known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Recreate containers on server
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" 'cd /srv/miet-rp && ./recreate.sh'
