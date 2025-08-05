@@ -26,7 +26,7 @@ jobs:
 
       - name: Replace registry URLs
         run: |
-          sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml Dockerfile
+          sed -i 's|nexus\.sipc\.miet\.ru|repo\.sipc\.miet\.ru|g' docker-compose.yml
 
       - name: Rsync to server
         run: |
