@@ -63,7 +63,7 @@ jobs:
             "cd /srv/miet-rp && \
              docker-compose pull && \
              docker-compose up -d"
-
+ 
       - name: Reload nginx in container
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
