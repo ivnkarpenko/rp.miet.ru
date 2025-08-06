@@ -1,5 +1,3 @@
-# .github/workflows/deploy.yml
-
 name: CI/CD Deploy
 
 on:
@@ -12,9 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Start SSH agent and add key
+      - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -25,7 +24,7 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Install rsync locally
+      - name: Install rsync
         run: |
           sudo apt-get update
           sudo apt-get install -y rsync
@@ -47,23 +46,15 @@ jobs:
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" << 'EOF'
             cd /srv/miet-rp
-            docker-compose pull
-            docker-compose up -d
-          EOF
 
-      - name: Wait for nginx container
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" << 'EOF'
-            cd /srv/miet-rp
-            for i in $(seq 1 60); do
-              cid=$(docker-compose ps -q nginx)
-              if [ -n "$cid" ] && [ "$(docker inspect -f '{{.State.Status}}' "$cid")" = "running" ]; then
-                exit 0
-              fi
-              sleep 1
-            done
-            echo "nginx container did not start in time" >&2
-            exit 1
+            # Очищаем старую компоновку
+            docker-compose down
+
+            # Тянем свежие образы
+            docker-compose pull
+
+            # Поднимаем всё заново
+            docker-compose up -d --force-recreate
           EOF
 
       - name: Reload nginx in container
