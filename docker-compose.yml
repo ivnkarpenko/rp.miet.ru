@@ -17,7 +17,6 @@ services:
       - ./nginx-root-configs/fastcgi_params:/etc/nginx/fastcgi_params:ro
       - ./nginx-root-configs/geo.conf:/etc/nginx/geo.conf:ro
       - ./nginx-root-configs/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx-redirects/:/etc/nginx/redirect/:ro
       - ./nginx-certs/:/etc/nginx/cert/:ro
       - ./nginx-logs/:/var/log/nginx/:rw
       - ./vhosts/:/srv/vhosts/:ro
