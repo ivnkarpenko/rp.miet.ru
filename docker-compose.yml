@@ -7,25 +7,26 @@ services:
     volumes:
       - ./vhosts/msdn.miet.ru/:/srv/vhosts/msdn.miet.ru/:ro
     network_mode: "host"
-  nginx: 
+
+  nginx:
     platform: linux/amd64
     image: nginx:1.24
     restart: always
     volumes:
-      - ./nginx-root-configs/abit-htpasswd:/etc/nginx/abit-htpasswd
-      - ./nginx-root-configs/fastcgi_params:/etc/nginx/fastcgi_params
-      - ./nginx-root-configs/geo.conf:/etc/nginx/geo.conf
-      - ./nginx-root-configs/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx-root-configs/testcookie.conf:/etc/nginx/testcookie.conf
-      - ./nginx-root-configs/brotli.conf:/etc/nginx/brotli.conf
-      - ./nginx-pagespeed-cache/:/var/ngx_pagespeed_cache/
-      - ./nginx-root-configs/pagespeed.conf:/etc/nginx/pagespeed.conf
-      - ./nginx-redirects/:/etc/nginx/redirect/
-      - ./vhosts/:/srv/vhosts/
-      - ./nginx-certs/:/etc/nginx/cert/
-      - ./nginx-logs/:/var/log/nginx/
+      - ./nginx-root-configs/abit-htpasswd:/etc/nginx/abit-htpasswd:ro
+      - ./nginx-root-configs/fastcgi_params:/etc/nginx/fastcgi_params:ro
+      - ./nginx-root-configs/geo.conf:/etc/nginx/geo.conf:ro
+      - ./nginx-root-configs/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx-root-configs/testcookie.conf:/etc/nginx/testcookie.conf:ro
+      - ./nginx-root-configs/brotli.conf:/etc/nginx/brotli.conf:ro
+      - ./nginx-root-configs/pagespeed.conf:/etc/nginx/pagespeed.conf:ro
+      - ./nginx-redirects/:/etc/nginx/redirect/:ro
+      - ./nginx-pagespeed-cache/:/var/ngx_pagespeed_cache/:rw
+      - ./nginx-certs/:/etc/nginx/cert/:ro
+      - ./nginx-logs/:/var/log/nginx/:rw
+      - ./vhosts/:/srv/vhosts/:ro
     extra_hosts:
-            - "php:127.0.0.1"
+      - "php:127.0.0.1"
     depends_on:
       - php
     network_mode: "host"
