@@ -51,6 +51,21 @@ jobs:
             docker-compose up -d
           EOF
 
+      - name: Wait for nginx container
+        run: |
+          ssh "${{ secrets.RP_CONNECTION_STRING }}" << 'EOF'
+            # wait until 'nginx' container is running (up to 60s)
+            for i in $(seq 1 60); do
+              status=$(docker inspect -f '{{.State.Status}}' $(docker-compose ps -q nginx))
+              if [ "$status" = "running" ]; then
+                exit 0
+              fi
+              sleep 1
+            done
+            echo "nginx container did not start in time" >&2
+            exit 1
+          EOF
+
       - name: Reload nginx in container
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" \
