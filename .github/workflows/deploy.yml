@@ -57,7 +57,4 @@ jobs:
             docker-compose up -d --force-recreate
           EOF
 
-      - name: Reload nginx in container
-        run: |
-          ssh "${{ secrets.RP_CONNECTION_STRING }}" \
-            "cd /srv/miet-rp && docker-compose exec -T nginx nginx -s reload"
+
