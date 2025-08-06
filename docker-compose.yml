@@ -20,6 +20,8 @@ services:
       - ./nginx-certs/:/etc/nginx/cert/:ro
       - ./nginx-logs/:/var/log/nginx/:rw
       - ./vhosts/:/srv/vhosts/:ro
+      - ./vhosts/msdn.miet.ru/nginx.conf:/etc/nginx/conf.d/msdn.miet.ru.conf:ro
+      - ./vhosts/msdn.miet.ru/:/srv/vhosts/msdn.miet.ru/:ro
     extra_hosts:
       - "php:127.0.0.1"
     depends_on:
