@@ -1,3 +1,5 @@
+# .github/workflows/deploy.yml
+
 name: CI/CD Deploy
 
 on:
@@ -7,12 +9,10 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Server
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Start SSH agent and add key
         uses: webfactory/ssh-agent@v0.9.1
@@ -54,10 +54,10 @@ jobs:
       - name: Wait for nginx container
         run: |
           ssh "${{ secrets.RP_CONNECTION_STRING }}" << 'EOF'
-            # wait until 'nginx' container is running (up to 60s)
+            cd /srv/miet-rp
             for i in $(seq 1 60); do
-              status=$(docker inspect -f '{{.State.Status}}' $(docker-compose ps -q nginx))
-              if [ "$status" = "running" ]; then
+              cid=$(docker-compose ps -q nginx)
+              if [ -n "$cid" ] && [ "$(docker inspect -f '{{.State.Status}}' "$cid")" = "running" ]; then
                 exit 0
               fi
               sleep 1
